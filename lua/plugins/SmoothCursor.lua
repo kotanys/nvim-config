@@ -1,4 +1,6 @@
 return { 
     'gen740/SmoothCursor.nvim',
-    opts = {}
+    opts = {
+        threshold = 1
+    }
 }
