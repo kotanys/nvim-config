@@ -20,8 +20,10 @@ local options = {
 	
 	ignorecase = true,
 	laststatus = 3,
+
 }
 
+vim.g.c_syntax_for_h = true
 for n, v in pairs(options) do
 	vim.opt[n] = v
 end
