@@ -27,3 +27,8 @@ vim.g.c_syntax_for_h = true
 for n, v in pairs(options) do
 	vim.opt[n] = v
 end
+
+vim.diagnostic.config({
+    virtual_lines = {current_line = true},
+    virtual_text = true
+})

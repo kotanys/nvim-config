@@ -52,8 +52,5 @@ end
 
 return {
     "neovim/nvim-lspconfig",
-    dependencies = {
-        "olexsmir/gopher.nvim",
-    },
     config = setup_lsps,
 }
