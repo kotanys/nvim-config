@@ -43,7 +43,6 @@ local function do_check_updates(file, timeout_seconds)
     if do_update then
         os.execute(string.format('touch "%s"', path))
     end
-    print(do_update)
     return do_update
 end
 
