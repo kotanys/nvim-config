@@ -10,17 +10,19 @@ local options = {
 
 	-- persistent undo
 	undofile = true,
-	
+
+    -- show command in last line
 	showcmd = true,
 
 	-- tab thingies
 	tabstop = 4,
 	shiftwidth = 4,
 	expandtab = true,
+    smartindent = true,
 	
-	ignorecase = true,
+	ignorecase = true, -- ignores case...
+    smartcase = true, -- ...unless there is an UPPERCASE letter
 	laststatus = 3,
-
 }
 
 vim.g.c_syntax_for_h = true
