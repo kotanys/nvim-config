@@ -10,7 +10,7 @@ return {
         -- 'hrsh7th/vim-vsnip',
     },
     config = function()
-        cmp = require('cmp')
+        local cmp = require('cmp')
         cmp.setup({
             snippet = {
                 expand = function(args)
