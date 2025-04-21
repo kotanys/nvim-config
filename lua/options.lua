@@ -19,11 +19,18 @@ local options = {
 	shiftwidth = 4,
 	expandtab = true,
     smartindent = true,
-	
+
 	ignorecase = true, -- ignores case...
     smartcase = true, -- ...unless there is an UPPERCASE letter
 	laststatus = 3,
+
+    wrap = false,
 }
+
+vim.api.nvim_create_autocmd("VimResume", {
+    desc = "Redraw screen on resume",
+    callback = function() vim.cmd([[mode]]) end,
+})
 
 vim.g.c_syntax_for_h = true
 for n, v in pairs(options) do
@@ -31,6 +38,6 @@ for n, v in pairs(options) do
 end
 
 vim.diagnostic.config({
-    virtual_lines = {current_line = true},
+--    virtual_lines = {current_line = true},
     virtual_text = true
 })
