@@ -25,6 +25,7 @@ local options = {
 	laststatus = 3,
 
     wrap = false,
+    updatetime = 100,
 }
 
 vim.api.nvim_create_autocmd("VimResume", {

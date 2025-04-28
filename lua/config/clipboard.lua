@@ -10,3 +10,4 @@
 --             \   },
 --             \   'cache_enabled': 0,
 --             \ }]])
+vim.cmd([[set clipboard+=unnamedplus]])
