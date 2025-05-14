@@ -4,7 +4,7 @@ local function config(_config)
     }, _config or {})
 end
 
-function setup_gopls()
+local function setup_gopls()
     util = require('lspconfig.util')
     vim.lsp.config('gopls', {
         on_attach = on_attach,
@@ -52,10 +52,16 @@ function setup_lsps()
     vim.lsp.enable("basedpyright")
 end
 
-return {
-    "neovim/nvim-lspconfig",
-    dependencies = {
-        "williamboman/mason.nvim"
-    },
-    config = setup_lsps,
-}
+vim.g.nolsp = vim.g.nolsp or 0
+print(vim.g.nolsp)
+if vim.g.nolsp ~= 1 then
+    return {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            "williamboman/mason.nvim"
+        },
+        config = setup_lsps,
+    }
+else
+    return {}
+end
