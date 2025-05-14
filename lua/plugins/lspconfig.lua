@@ -6,7 +6,7 @@ end
 
 function setup_gopls()
     util = require('lspconfig.util')
-    require('lspconfig').gopls.setup({
+    vim.lsp.config('gopls', {
         on_attach = on_attach,
         cmd = { 'gopls', },
         filetypes = { 'go', 'go.mod' },
@@ -21,6 +21,7 @@ function setup_gopls()
             }
         }
     })
+    vim.lsp.enable('gopls')
     vim.api.nvim_create_autocmd("BufWritePre", {
         desc = 'Automatic Golang formatting',
         pattern = "*.go",
@@ -48,9 +49,13 @@ end
 
 function setup_lsps()
     setup_gopls()
+    vim.lsp.enable("basedpyright")
 end
 
 return {
     "neovim/nvim-lspconfig",
+    dependencies = {
+        "williamboman/mason.nvim"
+    },
     config = setup_lsps,
 }
