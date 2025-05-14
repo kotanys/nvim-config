@@ -2,7 +2,7 @@ return {
     "ray-x/go.nvim",
     dependencies = {  -- optional packages
         "ray-x/guihua.lua",
-        "neovim/nvim-lspconfig",
+        vim.g.nolsp ~= 1 and "neovim/nvim-lspconfig" or nil,   
         "nvim-treesitter/nvim-treesitter",
     },
     config = function()

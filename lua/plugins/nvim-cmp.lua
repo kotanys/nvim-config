@@ -1,7 +1,7 @@
 return {
     'hrsh7th/nvim-cmp',
     dependencies = {
-        'neovim/nvim-lspconfig',
+        vim.g.nolsp ~= 1 and 'neovim/nvim-lspconfig' or nil,
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-buffer',
         'hrsh7th/cmp-path',
@@ -69,13 +69,15 @@ return {
         ]]--
 
         -- Set up lspconfig.
-        local capabilities = require('cmp_nvim_lsp').default_capabilities()
-        -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-        -- require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
-        --     capabilities = capabilities
-        -- }
-        require('lspconfig')['gopls'].setup {
-            capabilities = capabilities
-        }
+        if vim.g.nolsp ~= 1 then
+            local capabilities = require('cmp_nvim_lsp').default_capabilities()
+            -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
+            -- require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
+            --     capabilities = capabilities
+            -- }
+            require('lspconfig')['gopls'].setup {
+                capabilities = capabilities
+            }
+        end
     end,
 }

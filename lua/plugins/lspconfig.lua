@@ -53,7 +53,6 @@ function setup_lsps()
 end
 
 vim.g.nolsp = vim.g.nolsp or 0
-print(vim.g.nolsp)
 if vim.g.nolsp ~= 1 then
     return {
         "neovim/nvim-lspconfig",
