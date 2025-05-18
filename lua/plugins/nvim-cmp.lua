@@ -1,26 +1,26 @@
 return {
     'hrsh7th/nvim-cmp',
     dependencies = {
-        vim.g.nolsp ~= 1 and 'neovim/nvim-lspconfig' or nil,
+        'neovim/nvim-lspconfig',
         'hrsh7th/cmp-nvim-lsp',
         'hrsh7th/cmp-buffer',
         'hrsh7th/cmp-path',
         'hrsh7th/cmp-cmdline',
-        'hrsh7th/cmp-calc',
-        'hrsh7th/cmp-vsnip',
-        'hrsh7th/vim-vsnip',
+        'hrsh7th/cmp-calc'
+        -- 'hrsh7th/cmp-vsnip',
+        -- 'hrsh7th/vim-vsnip',
     },
     config = function()
         local cmp = require('cmp')
         cmp.setup({
             snippet = {
                 expand = function(args)
-                    vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
+                    -- vim.fn["vsnip#anonymous"](args.body) -- For `vsnip` users.
                     -- require('luasnip').lsp_expand(args.body) -- For `luasnip` users.
                     -- require('snippy').expand_snippet(args.body) -- For `snippy` users.
                     -- vim.fn["UltiSnips#Anon"](args.body) -- For `ultisnips` users.
                     vim.snippet.expand(args.body) -- For native neovim snippets (Neovim v0.10+)
-                    
+
                     -- For `mini.snippets` users:
                     -- local insert = MiniSnippets.config.expand.insert or MiniSnippets.default_insert
                     -- insert({ body = args.body }) -- Insert at cursor
@@ -41,43 +41,10 @@ return {
                     get_bufnrs = function()
                         return vim.api.nvim_list_bufs()
                     end
-                } },
+                }},
                 { name = 'path' },
-                { name = 'vsnip' },
-            }, {
                 { name = 'calc' },
-                }),
-        })
-        --[[
-        -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
-        cmp.setup.cmdline({ '/', '?' }, {
-            mapping = cmp.mapping.preset.cmdline(),
-            sources = {
-                { name = 'buffer' }
-            }
-        })
-
-        -- Use cmdline & path source for ':' (if you enabled `native_menu`, this won't work anymore).
-        cmp.setup.cmdline(':', {
-            mapping = cmp.mapping.preset.cmdline(),
-            sources = cmp.config.sources({
-                { name = 'path' },
-                { name = 'cmdline' }
             }),
-            matching = { disallow_symbol_nonprefix_matching = false }
         })
-        ]]--
-
-        -- Set up lspconfig.
-        if vim.g.nolsp ~= 1 then
-            local capabilities = require('cmp_nvim_lsp').default_capabilities()
-            -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-            -- require('lspconfig')['<YOUR_LSP_SERVER>'].setup {
-            --     capabilities = capabilities
-            -- }
-            require('lspconfig')['gopls'].setup {
-                capabilities = capabilities
-            }
-        end
     end,
 }
