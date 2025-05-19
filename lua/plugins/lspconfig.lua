@@ -50,8 +50,5 @@ end
 
 return {
     "neovim/nvim-lspconfig",
-    dependencies = {
-        "williamboman/mason.nvim"
-    },
     config = setup_lsps,
 }
