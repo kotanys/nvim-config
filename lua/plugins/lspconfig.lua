@@ -19,7 +19,7 @@ local function setup_gopls()
         desc = 'Automatic Golang formatting',
         pattern = "*.go",
         callback = function()
-            local params = vim.lsp.util.make_range_params()
+            local params = vim.lsp.util.make_range_params(0, "utf-8")
             params.context = {only = {"source.organizeImports"}}
             -- buf_request_sync defaults to a 1000ms timeout. Depending on your
             -- machine and codebase, you may want longer. Add an additional
