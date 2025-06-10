@@ -26,6 +26,10 @@ local options = {
 
     wrap = false,
     updatetime = 100,
+    
+    -- Russian mapping
+    langmap = 'ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖЭХЪБЮЁ;ABCDEFGHIJKLMNOPQRSTUVWXYZ:\"{}<>~,' ..
+              'фисвуапршолдьтщзйкыегмцчняжэхъбюё;abcdefghijklmnopqrstuvwxyz;\'[]\\,`.',
 }
 
 vim.api.nvim_create_autocmd("VimResume", {
