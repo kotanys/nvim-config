@@ -45,10 +45,46 @@ function setup_lsps()
         return
     end
     setup_gopls()
-    vim.lsp.enable("basedpyright")
+
+    vim.lsp.enable("pyright")
+    
+    vim.lsp.config("bashls", {
+        settings = {
+            bashIde = {
+                -- Ignore:
+                --  1090,1091: 'can't follow file' warnings
+                --  2155: return code masking warnings
+                shellcheckArguments = "--exclude=1090,1091,2155"
+            }
+        }
+    })
+    vim.lsp.enable("bashls")
 end
 
 return {
-    "neovim/nvim-lspconfig",
-    config = setup_lsps,
+    {
+        "neovim/nvim-lspconfig",
+        dependencies = {
+            "williamboman/mason.nvim"
+        },
+        config = setup_lsps,
+    },
+    {
+        "williamboman/mason.nvim",
+        opts = {},
+    },
+    {
+        "mason-org/mason-lspconfig.nvim",
+        dependencies = {
+            "williamboman/mason.nvim"
+        },
+        opts = {
+            ensure_installed = {
+                "pyright",
+                "bashls",
+                "gopls"
+            },
+            automatic_enable = false,
+        },
+    }
 }

@@ -20,7 +20,11 @@ return {
         'airblade/vim-gitgutter',
         config = function() end,
     },
+    { -- Nerd font icons 
+        'echasnovski/mini.icons',
+        opts = {}
+    },
     { -- Press F2 to add a header guard in C/C++ headers
         "kotanys/header-guard-macro",
-    }
+    },
 }
