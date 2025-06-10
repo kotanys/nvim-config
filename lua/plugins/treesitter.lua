@@ -7,13 +7,14 @@ return {
                 ensure_installed = {
                     "c",
                     "go",
-                    "html",
+                    "latex",
                     "lua",
                     "markdown",
                     "markdown_inline",
                     "python",
+                    "query",
                     "vim",
-                    "vimdoc"
+                    "vimdoc",
                 },
                 highlight = { enable = true },
                 indent = { enable = true },
