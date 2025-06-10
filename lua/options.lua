@@ -1,28 +1,28 @@
 local options = {
-	-- line numbers
-	number = true,
-	relativenumber = true,
-	signcolumn = 'yes',
+    -- line numbers
+    number = true,
+    relativenumber = true,
+    signcolumn = 'yes',
 
-	-- split settings
-	splitbelow = true,
-	splitright = true,
+    -- split settings
+    splitbelow = true,
+    splitright = true,
 
-	-- persistent undo
-	undofile = true,
+    -- persistent undo
+    undofile = true,
 
     -- show command in last line
-	showcmd = true,
+    showcmd = true,
 
-	-- tab thingies
-	tabstop = 4,
-	shiftwidth = 4,
-	expandtab = true,
+    -- tab thingies
+    tabstop = 4,
+    shiftwidth = 4,
+    expandtab = true,
     smartindent = true,
 
-	ignorecase = true, -- ignores case...
+    ignorecase = true, -- ignores case...
     smartcase = true, -- ...unless there is an UPPERCASE letter
-	laststatus = 3,
+    laststatus = 3,
 
     wrap = false,
     updatetime = 100,
@@ -35,7 +35,7 @@ vim.api.nvim_create_autocmd("VimResume", {
 
 vim.g.c_syntax_for_h = true
 for n, v in pairs(options) do
-	vim.opt[n] = v
+    vim.opt[n] = v
 end
 
 vim.diagnostic.config({
