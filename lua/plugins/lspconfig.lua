@@ -1,9 +1,10 @@
+local util = require('lspconfig.util')
+
 local function setup_gopls()
-    util = require('lspconfig.util')
     require('lspconfig').gopls.setup({
         on_attach = on_attach,
         cmd = { 'gopls', },
-        filetypes = { 'go', 'go.mod' },
+        filetypes = { 'go', 'gomod' },
         root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
         settings = {
             gopls = {
@@ -40,14 +41,14 @@ local function setup_gopls()
     })
 end
 
-function setup_lsps()
+function SetupLsps()
     if vim.g.nolsp then
         return
     end
     setup_gopls()
 
     vim.lsp.enable("pyright")
-    
+
     vim.lsp.config("bashls", {
         settings = {
             bashIde = {
@@ -59,6 +60,65 @@ function setup_lsps()
         }
     })
     vim.lsp.enable("bashls")
+    vim.lsp.config("powershell_es", {
+        bundle_path = '/home/kotanys/.local/share/nvim/mason/packages/powershell-editor-services/',
+        init_options = {
+            enableProfileLoading = false,
+        },
+    })
+    vim.lsp.enable("powershell_es")
+    vim.lsp.config('lua_ls', {
+        on_init = function(client)
+            if client.workspace_folders then
+                local path = client.workspace_folders[1].name
+                if
+                    path ~= vim.fn.stdpath('config')
+                    and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
+                then
+                    return
+                end
+            end
+
+            client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
+                runtime = {
+                    -- Tell the language server which version of Lua you're using (most
+                    -- likely LuaJIT in the case of Neovim)
+                    version = 'LuaJIT',
+                    -- Tell the language server how to find Lua modules same way as Neovim
+                    -- (see `:h lua-module-load`)
+                    path = {
+                        'lua/?.lua',
+                        'lua/?/init.lua',
+                    },
+                },
+                -- Make the server aware of Neovim runtime files
+                workspace = {
+                    checkThirdParty = false,
+                    library = {
+                        vim.env.VIMRUNTIME,
+                        -- Depending on the usage, you might want to add additional paths
+                        -- here.
+                        -- '${3rd}/luv/library'
+                        -- '${3rd}/busted/library'
+                    }
+                    -- Or pull in all of 'runtimepath'.
+                    -- NOTE: this is a lot slower and will cause issues when working on
+                    -- your own configuration.
+                    -- See https://github.com/neovim/nvim-lspconfig/issues/3189
+                    -- library = {
+                    --   vim.api.nvim_get_runtime_file('', true),
+                    -- }
+                }
+            })
+        end,
+        settings = {
+            Lua = {}
+        },
+        root_pattern = util.root_pattern('init.lua', '.git')
+    })
+    vim.lsp.enable("lua_ls")
+
+    vim.lsp.enable("dockerls")
 end
 
 return {
@@ -67,7 +127,7 @@ return {
         dependencies = {
             "williamboman/mason.nvim"
         },
-        config = setup_lsps,
+        config = SetupLsps,
     },
     {
         "williamboman/mason.nvim",
@@ -81,8 +141,10 @@ return {
         opts = {
             ensure_installed = {
                 "pyright",
+                "lua_ls",
                 "bashls",
-                "gopls"
+                "gopls",
+                "dockerls",
             },
             automatic_enable = false,
         },

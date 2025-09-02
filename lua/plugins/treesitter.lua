@@ -1,4 +1,4 @@
-return { 
+return {
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
@@ -33,7 +33,10 @@ return {
                         enable = false,
                         -- Set to false if you have an `updatetime` of ~100.
                         clear_on_cursor_move = false,
-                    }, 
+                    },
+                    navigation = {
+                        enable = true,
+                    },
                 },
             })
         end

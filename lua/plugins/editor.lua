@@ -1,10 +1,10 @@
-return { 
+return {
     { -- Adds SubstituteCase command and others
         "vim-scripts/keepcase.vim",
     },
     { -- Better TAB (does multiple indents at once, doesn't work well)
         'VidocqH/auto-indent.nvim',
-        ft = {"c", "cpp"},
+        ft = { "c", "cpp" },
         opts = {},
     },
     { -- Use relative numbers for active buffer outside of insert mode; normal numbers otherwise
@@ -20,7 +20,7 @@ return {
         'airblade/vim-gitgutter',
         config = function() end,
     },
-    { -- Nerd font icons 
+    { -- Nerd font icons
         'echasnovski/mini.icons',
         opts = {}
     },
