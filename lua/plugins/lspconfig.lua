@@ -17,6 +17,7 @@ local function setup_gopls()
         }
     })
     vim.api.nvim_create_autocmd("BufWritePre", {
+        group = vim.api.nvim_create_augroup("GolangFormatting", { clear = true }),
         desc = 'Automatic Golang formatting',
         pattern = "*.go",
         callback = function()

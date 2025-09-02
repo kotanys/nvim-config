@@ -24,7 +24,7 @@ map('', 'q:', '')
 map('', 'q/', '')
 map('', 'q?', '')
 
-map('n', '<Leader>S', '<cmd>source %<CR>')
+map('n', '<Leader>S', ':update<CR> :source %<CR>', { silent = false })
 map('n', '<Leader>f', vim.lsp.buf.format)
 
 local extract_comment = function(trim)

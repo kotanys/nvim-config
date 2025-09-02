@@ -34,6 +34,7 @@ vim.opt.langmap = [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖЭХЪ
 vim.g.c_syntax_for_h = true
 
 vim.api.nvim_create_autocmd("VimResume", {
+    group = vim.api.nvim_create_augroup("ResumeRedraw", { clear = true }),
     desc = "Redraw screen on resume",
     callback = function() vim.cmd([[mode]]) end,
 })
