@@ -3,7 +3,7 @@ colorscheme sorbet
 hi Identifier guifg=#ccccdc
 hi clear Visual
 hi Visual guibg=#264f78
-hi NormalFloat guibg=#222222
+hi NormalFloat guibg=#222230
 ]])
 
 return {

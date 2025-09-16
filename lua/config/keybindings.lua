@@ -1,5 +1,7 @@
 local map = vim.keymap.set
 
+map({ 'n' }, '<Leader>o', '<cmd>make<CR>')
+
 -- Choose virtual lines OR virtual text (View Lines)
 map({ 'n' }, '<Leader>vl', function()
     local virt_lines_enabled = vim.diagnostic.config().virtual_lines
@@ -14,9 +16,9 @@ map({ 'n' }, '<Leader>vw', function()
     vim.opt['wrap'] = not vim.api.nvim_get_option_value('wrap', {})
 end)
 
--- Toggle highlight (View Highlight)
+-- Unhighlight highlighted text (View Highlight)
 map({ 'n' }, '<Leader>vh', function()
-    vim.opt['hlsearch'] = not vim.api.nvim_get_option_value('hlsearch', {})
+    vim.fn.setreg('/', '')
 end)
 
 -- Remove command line keybindings
@@ -25,7 +27,23 @@ map('', 'q/', '')
 map('', 'q?', '')
 
 map('n', '<Leader>S', ':update<CR> :source %<CR>', { silent = false })
-map('n', '<Leader>f', vim.lsp.buf.format)
+
+vim.api.nvim_create_autocmd("LspAttach", {
+    group = vim.api.nvim_create_augroup("lsp.rebinds", {}),
+    desc = "Register LSP-specific keymaps",
+    callback = function(args)
+        local client = vim.lsp.get_client_by_id(args.data.client_id)
+        if client == nil then return end
+
+        map('n', '<Leader>f', vim.lsp.buf.format, { buffer = args.buf })
+
+        -- replace '=' with 'gq' if client supports range formatting
+        -- reminder: if client is attached, gq performs lsp formatting
+        if client:supports_method('textDocument/rangeFormatting') then
+            map({ 'n', 'x', 'o' }, '=', 'gq', { buffer = args.buf, noremap = true })
+        end
+    end,
+})
 
 local extract_comment = function(trim)
     if trim == nil then
@@ -58,7 +76,8 @@ map({ 'n', 'x' }, '<Leader>co', function()
     local was_visual = is_mode_visual()
     local incsearch_was_enabled = vim.api.nvim_get_option_value('incsearch', {})
     vim.opt_local['incsearch'] = false
-    local subcommand = [[:substitute/^\(\W*\)]] .. extract_comment(true) .. [[\W*/\1/e<CR> :let @/=''<CR>]]
+    local comment = string.gsub(extract_comment(true), "/", "\\/")
+    local subcommand = [[:substitute/^\(\W*\)]] .. comment .. [[\W*/\1/e<CR> :let @/=''<CR>]]
     if incsearch_was_enabled then
         subcommand = subcommand .. [[ :setlocal incsearch<CR>]]
     end

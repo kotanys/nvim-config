@@ -10,7 +10,7 @@ vim.opt.signcolumn = 'yes'
 vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.opt.undofile = true -- persistent undo
-vim.opt.showcmd = true -- show command in last line
+vim.opt.showcmd = true  -- show command in last line
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.expandtab = true
@@ -19,9 +19,10 @@ vim.opt.ignorecase = true -- ignores case...
 vim.opt.smartcase = true  -- ...unless there is an UPPERCASE letter
 vim.opt.laststatus = 3
 vim.opt.updatetime = 100
-vim.opt.pumheight = 12 -- i.e. popup menu height
+vim.opt.pumheight = 12      -- i.e. popup menu height
 vim.opt.wrap = false
 vim.opt.smoothscroll = true -- scroll inside of line if it's wrapped
+vim.opt.scrolloff = 3       -- make that many lines always above and below the cursor
 vim.opt.winborder = "rounded"
 vim.opt.colorcolumn = "100"
 
@@ -31,7 +32,7 @@ vim.opt.langmap = [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖЭХЪ
                   [[фисвуапршолдьтщзйкыегмцчняжэхъбюё;]] ..
                   [[abcdefghijklmnopqrstuvwxyz\;\'[]\,.`]]
 
-vim.g.c_syntax_for_h = true
+-- vim.g.c_syntax_for_h = true
 
 vim.api.nvim_create_autocmd("VimResume", {
     group = vim.api.nvim_create_augroup("ResumeRedraw", { clear = true }),

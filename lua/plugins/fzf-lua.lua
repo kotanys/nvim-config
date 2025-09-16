@@ -6,6 +6,9 @@ return {
     -- or if using mini.icons/mini.nvim
     dependencies = { "echasnovski/mini.icons" },
     opts = {
+        fzf_opts = {
+            ["--cycle"] = true, -- doesn't work TODO
+        },
         files = {
             file_ignore_patterns = {
                 "%.cache/", -- clangd cache

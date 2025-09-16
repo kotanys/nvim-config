@@ -6,8 +6,7 @@ local function setup_gopls()
         cmd = { 'gopls', },
         filetypes = { 'go', 'gomod' },
         root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
-        settings = {
-            gopls = {
+        settings = { gopls = {
                 analyses = {
                     unusedparams = true,
                     shadow = true,
@@ -17,7 +16,7 @@ local function setup_gopls()
         }
     })
     vim.api.nvim_create_autocmd("BufWritePre", {
-        group = vim.api.nvim_create_augroup("GolangFormatting", { clear = true }),
+        group = vim.api.nvim_create_augroup("lsp.golang.formatting", { clear = true }),
         desc = 'Automatic Golang formatting',
         pattern = "*.go",
         callback = function()
@@ -55,7 +54,7 @@ function SetupLsps()
             bashIde = {
                 -- Ignore:
                 --  1090,1091: 'can't follow file' warnings
-                --  2155: return code masking warnings
+                --  2155: 'return code masking' warnings
                 shellcheckArguments = "--exclude=1090,1091,2155"
             }
         }
@@ -120,6 +119,13 @@ function SetupLsps()
     vim.lsp.enable("lua_ls")
 
     vim.lsp.enable("dockerls")
+
+    vim.lsp.config("clangd", {
+        settings = {
+            clangd = { arguments = { "--clang-tidy" } }
+        }
+    })
+    vim.lsp.enable("clangd")
 end
 
 return {
@@ -134,20 +140,20 @@ return {
         "williamboman/mason.nvim",
         opts = {},
     },
-    {
-        "mason-org/mason-lspconfig.nvim",
-        dependencies = {
-            "williamboman/mason.nvim"
-        },
-        opts = {
-            ensure_installed = {
-                "pyright",
-                "lua_ls",
-                "bashls",
-                "gopls",
-                "dockerls",
-            },
-            automatic_enable = false,
-        },
-    }
+    -- {
+    --     "mason-org/mason-lspconfig.nvim",
+    --     dependencies = {
+    --         "williamboman/mason.nvim"
+    --     },
+    --     opts = {
+    --         ensure_installed = {
+    --             "pyright",
+    --             "lua_ls",
+    --             "bashls",
+    --             "gopls",
+    --             "dockerls",
+    --         },
+    --         automatic_enable = false,
+    --     },
+    -- }
 }
