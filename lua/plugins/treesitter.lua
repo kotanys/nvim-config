@@ -8,7 +8,6 @@ return {
                     "bash",
                     "c",
                     "cpp",
-                    "dockerfile",
                     "go",
                     "latex",
                     "lua",
@@ -46,3 +45,9 @@ return {
         end
     }
 }
+
+--[[ Notes
+-- Dockerfile tree-sitter looks better then simple regex,
+-- but still isn't consistent enough. Regex is fine.
+-- Dockerfile highlighting is better handled via dockerfile lsp.
+]] --
