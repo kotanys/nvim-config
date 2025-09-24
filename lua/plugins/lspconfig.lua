@@ -1,12 +1,8 @@
-local util = require('lspconfig.util')
-
 local function setup_gopls()
-    require('lspconfig').gopls.setup({
-        on_attach = on_attach,
-        cmd = { 'gopls', },
-        filetypes = { 'go', 'gomod' },
-        root_dir = util.root_pattern('go.work', 'go.mod', '.git'),
-        settings = { gopls = {
+    vim.lsp.config('gopls', {
+        -- on_attach = on_attach,
+        settings = {
+            gopls = {
                 analyses = {
                     unusedparams = true,
                     shadow = true,
@@ -21,7 +17,7 @@ local function setup_gopls()
         pattern = "*.go",
         callback = function()
             local params = vim.lsp.util.make_range_params(0, "utf-8")
-            params.context = {only = {"source.organizeImports"}}
+            params.context = { only = { "source.organizeImports" } }
             -- buf_request_sync defaults to a 1000ms timeout. Depending on your
             -- machine and codebase, you may want longer. Add an additional
             -- argument after params if you find that you have to write the file
@@ -36,9 +32,10 @@ local function setup_gopls()
                     end
                 end
             end
-            vim.lsp.buf.format({async = false})
+            vim.lsp.buf.format({ async = false })
         end
     })
+    vim.lsp.enable('gopls')
 end
 
 function SetupLsps()
@@ -61,6 +58,7 @@ function SetupLsps()
     })
     vim.lsp.enable("bashls")
     vim.lsp.config("powershell_es", {
+        -- TODO fix this to be not hardcoded
         bundle_path = '/home/kotanys/.local/share/nvim/mason/packages/powershell-editor-services/',
         init_options = {
             enableProfileLoading = false,
@@ -114,7 +112,7 @@ function SetupLsps()
         settings = {
             Lua = {}
         },
-        root_pattern = util.root_pattern('init.lua', '.git')
+        root_markers = { { ".luarc.json", ".luarc.jsonc" }, ".git", "init.lua", },
     })
     vim.lsp.enable("lua_ls")
 

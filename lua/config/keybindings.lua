@@ -35,6 +35,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if client == nil then return end
 
+        -- Toggle inlay hints, (View Inlay-hints)
+        map({ 'n', 'v' }, '<Leader>vi', function()
+            local enabled = vim.lsp.inlay_hint.is_enabled()
+            vim.lsp.inlay_hint.enable(not enabled)
+        end)
+
         map('n', '<Leader>f', vim.lsp.buf.format, { buffer = args.buf })
 
         -- replace '=' with 'gq' if client supports range formatting

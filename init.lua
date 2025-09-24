@@ -25,6 +25,7 @@ vim.opt.smoothscroll = true -- scroll inside of line if it's wrapped
 vim.opt.scrolloff = 3       -- make that many lines always above and below the cursor
 vim.opt.winborder = "rounded"
 vim.opt.colorcolumn = "100"
+vim.opt.virtualedit = "block"
 
 -- Russian mapping
 vim.opt.langmap = [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖЭХЪБЮЁ;]] ..
