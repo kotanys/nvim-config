@@ -1,3 +1,7 @@
+-- stop complaints about undefined fields from lua_ls
+---@type any
+vim.uv = vim.uv
+
 ---@param lsp string
 ---@param config vim.lsp.Config?
 local function lsp_enable(lsp, config)
@@ -20,6 +24,89 @@ local function replace_last_occurrence(str, find, replace)
     return str
 end
 
+---@param filename string
+---@param search string
+---@param replace string
+---@param bufnr integer?
+local function buf_substitute(filename, search, replace, bufnr)
+    local buffer_was_created_here = bufnr == nil
+    local was_modified_before = false
+    if not bufnr then
+        bufnr = vim.api.nvim_create_buf(false, false) -- listed=false, scratch=false
+        vim.api.nvim_set_option_value('bufhidden', 'hide', { buf = bufnr })
+        vim.api.nvim_buf_set_name(bufnr, filename)
+        vim.api.nvim_buf_call(bufnr, vim.cmd.edit)
+    else
+        was_modified_before = vim.api.nvim_get_option_value('modified', { buf = bufnr })
+    end
+
+    local lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+    local modified_lines = {}
+    for _, line in ipairs(lines) do
+        local modified_line = line:gsub(search, replace)
+        table.insert(modified_lines, modified_line)
+    end
+
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, modified_lines)
+    if not was_modified_before then
+        vim.api.nvim_buf_call(bufnr, vim.cmd.update)
+    end
+    if buffer_was_created_here then
+        vim.api.nvim_buf_delete(bufnr, { force = true })
+    end
+end
+
+---@param old_buf_path string
+---@param new_buf_path string
+---@param client vim.lsp.Client
+local function fix_cmake_lists(old_buf_path, new_buf_path, client)
+    local dir_sep = '/' -- WINDOWS NOT SUPPORTED lol
+    local dir = vim.fn.fnamemodify(old_buf_path, ":h")
+    local cmake_path = nil
+    while old_buf_path ~= client.root_dir do
+        local test_path = vim.fn.simplify(dir .. dir_sep .. "CMakeLists.txt")
+        local exists = vim.uv.fs_stat(test_path, nil) ~= nil
+        if exists then
+            cmake_path = test_path
+            break
+        end
+        dir = vim.fn.fnamemodify(dir, ":h")
+    end
+    if cmake_path == nil then return end
+    local cmake_bufnr = nil
+    for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+        local buf_name = vim.api.nvim_buf_get_name(bufnr)
+        if buf_name == cmake_path then
+            cmake_bufnr = bufnr
+        end
+    end
+
+    local old_name = vim.fn.fnamemodify(old_buf_path, ":t")
+    local new_name = vim.fn.fnamemodify(new_buf_path, ":t")
+    buf_substitute(cmake_path, old_name, new_name, cmake_bufnr)
+end
+
+---@param old_buf_name string
+---@param new_buf_name string
+---@param client vim.lsp.Client
+local function rename_async(old_buf_name, new_buf_name, client)
+    vim.uv.fs_rename(old_buf_name, new_buf_name, function(fs_err, success)
+        if not success then
+            error(fs_err)
+        end
+        vim.schedule(function()
+            for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+                local buf_name = vim.api.nvim_buf_get_name(bufnr)
+                if buf_name == old_buf_name then
+                    vim.api.nvim_buf_set_name(bufnr, new_buf_name)
+                end
+            end
+            fix_cmake_lists(old_buf_name, new_buf_name, client)
+        end)
+    end
+    )
+end
+
 ---@param bufnr integer
 ---@param client vim.lsp.Client
 local function rename_source_header(client, bufnr)
@@ -38,19 +125,19 @@ local function rename_source_header(client, bufnr)
         end
         local old_other = vim.uri_to_fname(result)
         local old_path = vim.uri_to_fname(params.uri)
-        local old_name = old_path:match([[([^/]+)%.[^/%.]*$]])
+        local old_name = vim.fn.fnamemodify(old_path, ":t:r")
         local new_name = vim.fn.input("New Name: ", old_name)
-        if new_name == nil or new_name == "" then return end
+        if new_name == "" then return end
 
         local new_path = replace_last_occurrence(old_path, old_name, new_name)
         local new_other = replace_last_occurrence(old_other, old_name, new_name)
         local msg = "Rename:\n"
             .. old_path .. " -> " .. new_path .. "\n"
             .. old_other .. " -> " .. new_other .. "\n"
+
         if vim.fn.confirm(msg, "&Yes\n&No") == 1 then
-            return
-            -- os.rename(old_name, new_name)
-            -- os.rename(old_other, new_other)
+            rename_async(old_path, new_path, client)
+            rename_async(old_other, new_other, client)
         end
     end, bufnr)
 end
@@ -130,7 +217,6 @@ function SetupLsps()
                 local path = client.workspace_folders[1].name
                 if
                     path ~= vim.fn.stdpath('config')
-                    ---@diagnostic disable-next-line: undefined-field
                     and (vim.uv.fs_stat(path .. '/.luarc.json') or vim.uv.fs_stat(path .. '/.luarc.jsonc'))
                 then
                     return
@@ -178,13 +264,13 @@ function SetupLsps()
 
     lsp_enable("dockerls")
 
+    local old_on_attach_clangd = vim.lsp.config.clangd.on_attach
     lsp_enable("clangd", {
         ---@param client vim.lsp.Client
         ---@param bufnr integer
         on_attach = function(client, bufnr)
-            local old_on_attach = vim.lsp.config.clangd.on_attach
-            if old_on_attach ~= nil then
-                old_on_attach(client, bufnr)
+            if old_on_attach_clangd ~= nil then
+                old_on_attach_clangd(client, bufnr)
             end
             vim.api.nvim_buf_create_user_command(bufnr, 'LspClangdRenameSourceHeader', function()
                 rename_source_header(client, bufnr)
