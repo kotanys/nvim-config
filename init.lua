@@ -4,6 +4,8 @@ vim.g.maplocalleader = "\\"
 require('config.keybindings')
 require('config.lazy')
 
+vim.cmd([[colorscheme mysorbet]])
+
 vim.opt.number = true
 vim.opt.relativenumber = true
 vim.opt.signcolumn = 'yes'
