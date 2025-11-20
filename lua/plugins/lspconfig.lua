@@ -207,7 +207,7 @@ function SetupLsps()
     })
     lsp_enable("powershell_es", {
         -- TODO fix this to be not hardcoded
-        bundle_path = '/home/kotanys/.local/share/nvim/mason/packages/powershell-editor-services/',
+        bundle_path = vim.env.HOME .. '/.local/share/nvim/mason/packages/powershell-editor-services/',
         init_options = {
             enableProfileLoading = false,
         },
@@ -316,20 +316,4 @@ return {
             },
         },
     },
-    -- {
-    --     "mason-org/mason-lspconfig.nvim",
-    --     dependencies = {
-    --         "williamboman/mason.nvim"
-    --     },
-    --     opts = {
-    --         ensure_installed = {
-    --             "pyright",
-    --             "lua_ls",
-    --             "bashls",
-    --             "gopls",
-    --             "dockerls",
-    --         },
-    --         automatic_enable = false,
-    --     },
-    -- }
 }

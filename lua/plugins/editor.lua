@@ -23,13 +23,6 @@ return {
         "echasnovski/mini.icons",
         opts = {}
     },
-    -- { -- Highlight unique letters when jumping with f/F/t/T
-    --     'jinh0/eyeliner.nvim',
-    --     opts = {
-    --         highlight_on_key = true,
-    --         dim = true,
-    --     }
-    -- },
     { -- Press F2 to add a header guard in C/C++ headers
         "kotanys/header-guard-macro",
     },
