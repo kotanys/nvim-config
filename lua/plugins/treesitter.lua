@@ -21,6 +21,9 @@ return {
                 },
                 highlight = { enable = true },
                 indent = { enable = true },
+                folds = {
+                    enable = true
+                },
             })
         end,
     },

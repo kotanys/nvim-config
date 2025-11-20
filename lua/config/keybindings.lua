@@ -1,3 +1,4 @@
+local VISUAL_BLOCK = '\22'
 local map = vim.keymap.set
 
 map({ 'n' }, '<Leader>o', '<cmd>make<CR>')
@@ -21,12 +22,40 @@ map({ 'n' }, '<Leader>vh', function()
     vim.fn.setreg('/', '')
 end)
 
+-- Toggle inlay hints (View Inlay-hints)
+map({ 'n', 'v' }, '<Leader>vi', function()
+    local enabled = vim.lsp.inlay_hint.is_enabled()
+    vim.lsp.inlay_hint.enable(not enabled)
+end)
+
 -- Remove command line keybindings
 map('', 'q:', '')
 map('', 'q/', '')
 map('', 'q?', '')
 
+-- TODO integrate code_action with vim-repeat 
+-- map({ 'n', 'v' }, 'gra', function()
+    -- vim.lsp.buf.code_action({
+        -- -- code_action has 'title'
+        -- filter = function(code_action)
+            -- return true
+        -- end,
+    -- })
+-- end)
+
+map({ 'n', 'x' }, 'q<CR>', 'q', { noremap = true })
+
+-- Resizing windows
+map('', '<M-h>', '<cmd>vertical resize -4<CR>')
+map('', '<M-j>', '<cmd>resize -4<CR>')
+map('', '<M-k>', '<cmd>resize +4<CR>')
+map('', '<M-l>', '<cmd>vertical resize +4<CR>')
+
 map('n', '<Leader>S', ':update<CR> :source %<CR>', { silent = false })
+
+-- Emacs-like left-right motions for Insert Mode
+map('i', '<C-b>', '<cmd>norm h<CR>', { silent = true })
+map('i', '<C-f>', '<cmd>norm l<CR>', { silent = true })
 
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("lsp.rebinds", {}),
@@ -34,12 +63,6 @@ vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)
         if client == nil then return end
-
-        -- Toggle inlay hints, (View Inlay-hints)
-        map({ 'n', 'v' }, '<Leader>vi', function()
-            local enabled = vim.lsp.inlay_hint.is_enabled()
-            vim.lsp.inlay_hint.enable(not enabled)
-        end)
 
         map('n', '<Leader>f', vim.lsp.buf.format, { buffer = args.buf })
 
@@ -65,11 +88,11 @@ end
 
 local is_mode_visual = function()
     local mode = vim.api.nvim_get_mode().mode
-    return mode == 'v' or mode == 'V' -- TODO add block mode
+    return mode == 'v' or mode == 'V' or mode == VISUAL_BLOCK
 end
 
--- Comment In
-map({ 'n', 'x' }, '<Leader>ci', function()
+-- Comment Out
+map({ 'n', 'x' }, '<Leader>co', function()
     local was_visual = is_mode_visual()
     local command = [[:norm ^i]] .. extract_comment() .. [[<CR>]]
     if was_visual then
@@ -77,13 +100,13 @@ map({ 'n', 'x' }, '<Leader>ci', function()
     end
     return command
 end, { expr = true, silent = true })
--- Comment Out
-map({ 'n', 'x' }, '<Leader>co', function()
+-- Comment In (meaning: revert 'Comment Out')
+map({ 'n', 'x' }, '<Leader>ci', function()
     local was_visual = is_mode_visual()
     local incsearch_was_enabled = vim.api.nvim_get_option_value('incsearch', {})
     vim.opt_local['incsearch'] = false
-    local comment = string.gsub(extract_comment(true), "/", "\\/")
-    local subcommand = [[:substitute/^\(\W*\)]] .. comment .. [[\W*/\1/e<CR> :let @/=''<CR>]]
+    local comment = vim.fn.escape(extract_comment(true), [[/\]])
+    local subcommand = [[:substitute/^\(\s*\)]] .. comment .. [[\s*/\1/e<CR> :let @/=''<CR>]]
     if incsearch_was_enabled then
         subcommand = subcommand .. [[ :setlocal incsearch<CR>]]
     end

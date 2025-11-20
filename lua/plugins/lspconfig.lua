@@ -8,6 +8,7 @@ local function lsp_enable(lsp, config)
     if config ~= nil then
         vim.lsp.config(lsp, config)
     end
+    -- TODO ask user for permission to download from Mason?
     vim.lsp.enable(lsp)
 end
 
@@ -214,6 +215,8 @@ function SetupLsps()
     lsp_enable('lua_ls', {
         on_init = function(client)
             if client.workspace_folders then
+                -- If not inside Neovim config directory,
+                -- DON'T load it's libraries
                 local path = client.workspace_folders[1].name
                 if
                     path ~= vim.fn.stdpath('config')
@@ -222,6 +225,8 @@ function SetupLsps()
                     return
                 end
             end
+
+            -- Else, DO load Neovim's libraries
 
             ---@diagnostic disable-next-line: param-type-mismatch
             client.config.settings.Lua = vim.tbl_deep_extend('force', client.config.settings.Lua, {
@@ -234,6 +239,7 @@ function SetupLsps()
                     path = {
                         'lua/?.lua',
                         'lua/?/init.lua',
+                        'lua/plugins/?.lua'
                     },
                 },
                 -- Make the server aware of Neovim runtime files
@@ -264,6 +270,18 @@ function SetupLsps()
 
     lsp_enable("dockerls")
 
+    lsp_enable("roslyn", {
+        settings = {
+            ["csharp|inlay_hints"] = {
+                csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                csharp_enable_inlay_hints_for_implicit_variable_types = true,
+            },
+            ["csharp|code_lens"] = {
+                dotnet_enable_references_code_lens = true,
+            },
+        },
+    })
+
     local old_on_attach_clangd = vim.lsp.config.clangd.on_attach
     lsp_enable("clangd", {
         ---@param client vim.lsp.Client
@@ -276,20 +294,27 @@ function SetupLsps()
                 rename_source_header(client, bufnr)
             end, { desc = 'Rename both source and header' })
         end,
+        cmd = { "clangd", "--clang-tidy", "--pch-storage=memory", "--fallback-style=Google" },
     })
 end
 
 return {
     {
         "neovim/nvim-lspconfig",
-        dependencies = {
-            "williamboman/mason.nvim"
-        },
         config = SetupLsps,
     },
     {
+        "seblyng/roslyn.nvim",
+        ft = 'cs'
+    },
+    {
         "williamboman/mason.nvim",
-        opts = {},
+        opts = {
+            registries = {
+                "github:mason-org/mason-registry",
+                "github:Crashdummyy/mason-registry",
+            },
+        },
     },
     -- {
     --     "mason-org/mason-lspconfig.nvim",

@@ -1,13 +1,13 @@
 return {
     "mfussenegger/nvim-lint",
-    -- dependencies = {
-    --     "rshkarin/mason-nvim-lint",
-    -- },
+    keys = '<Leader>l',
     config = function()
         local lint = require('lint')
         lint.linters_by_ft = {
             python = { 'mypy' },
             c = { 'cpplint' },
+            cpp = { 'cpplint' },
+            make = { 'checkmake' },
         }
         local lint_callback = function()
             lint.try_lint()

@@ -1,10 +1,14 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
-require('config.keybindings')
-require('config.lazy')
+require('config')
 
-vim.cmd([[colorscheme mysorbet]])
+if vim.env.TERM ~= 'linux' then
+    vim.cmd([[colorscheme mysorbet]])
+else
+    -- in tty mysorbet doesn't look fine
+    vim.cmd([[colorscheme vim]])
+end
 
 vim.opt.number = true
 vim.opt.relativenumber = true
