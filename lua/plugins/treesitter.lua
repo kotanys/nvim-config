@@ -27,26 +27,6 @@ return {
             })
         end,
     },
-    {
-        "nvim-treesitter/nvim-treesitter-refactor",
-        dependencies = {
-            "nvim-treesitter/nvim-treesitter"
-        },
-        config = function()
-            require('nvim-treesitter.configs').setup({
-                refactor = {
-                    highlight_definitions = {
-                        enable = false,
-                        -- Set to false if you have an `updatetime` of ~100.
-                        clear_on_cursor_move = false,
-                    },
-                    navigation = {
-                        enable = true,
-                    },
-                },
-            })
-        end
-    }
 }
 
 --[[ Notes
