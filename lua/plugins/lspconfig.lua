@@ -282,6 +282,8 @@ function SetupLsps()
         },
     })
 
+    lsp_enable("eslint")
+
     local old_on_attach_clangd = vim.lsp.config.clangd.on_attach
     lsp_enable("clangd", {
         ---@param client vim.lsp.Client
