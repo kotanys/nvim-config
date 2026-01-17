@@ -32,6 +32,7 @@ vim.opt.scrolloff = 3       -- make that many lines always above and below the c
 vim.opt.winborder = "rounded"
 vim.opt.colorcolumn = "100"
 vim.opt.virtualedit = "block"
+vim.opt.exrc = true
 
 -- Russian mapping
 vim.opt.langmap = [[ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯЖЭХЪБЮЁ;]] ..
