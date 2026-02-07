@@ -2,6 +2,7 @@ return {
     {
         "nvim-treesitter/nvim-treesitter",
         build = ":TSUpdate",
+        branch = "master", -- I see no point in upgrading to 'main'
         config = function()
             require('nvim-treesitter.configs').setup({
                 ensure_installed = {

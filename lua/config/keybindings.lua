@@ -33,14 +33,14 @@ map('', 'q:', '')
 map('', 'q/', '')
 map('', 'q?', '')
 
--- TODO integrate code_action with vim-repeat 
+-- TODO integrate code_action with vim-repeat
 -- map({ 'n', 'v' }, 'gra', function()
-    -- vim.lsp.buf.code_action({
-        -- -- code_action has 'title'
-        -- filter = function(code_action)
-            -- return true
-        -- end,
-    -- })
+-- vim.lsp.buf.code_action({
+-- -- code_action has 'title'
+-- filter = function(code_action)
+-- return true
+-- end,
+-- })
 -- end)
 
 map({ 'n', 'x' }, 'q<CR>', 'q', { noremap = true })
@@ -72,6 +72,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
             map({ 'n', 'x', 'o' }, '=', 'gq', { buffer = args.buf, noremap = true })
         end
     end,
+})
+
+-- A more vimmy rename
+local function rename_callback(tbl)
+    local args = tbl.fargs
+    vim.lsp.buf.rename(args[1])
+end
+local function rename_callback_complete(lead)
+
+end
+
+vim.api.nvim_create_user_command("Rename", rename_callback, {
+    nargs = 1,
+    complete = rename_callback_complete,
 })
 
 local extract_comment = function(trim)

@@ -18,6 +18,9 @@ endif
 if !exists('g:cmake_build_type')
     let g:cmake_build_type = 'Debug'
 endif
+if !exists('g:cmake_jobs')
+    let g:cmake_jobs = 8
+endif
 
 let s:build = shellescape(g:cmake_build_dir)
 
@@ -26,7 +29,7 @@ let &l:makeprg = 'mkdir -p ' .. s:build .. ' && env'
             \ .. ' CC=' .. shellescape(g:cmake_cc) 
             \ .. ' cmake -B ' .. s:build 
             \ .. ' -DCMAKE_BUILD_TYPE=' .. shellescape(g:cmake_build_type)
-            \ .. ' && make -j8 -C ' .. s:build
+            \ .. ' && make -j'.. string(g:cmake_jobs) .. ' -C ' .. s:build
 exe 'CompilerSet makeprg='..escape(&l:makeprg, ' \|"')
 CompilerSet errorformat&
 
