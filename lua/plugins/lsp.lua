@@ -61,11 +61,10 @@ end
 ---@param new_buf_path string
 ---@param client vim.lsp.Client
 local function fix_cmake_lists(old_buf_path, new_buf_path, client)
-    local dir_sep = '/' -- WINDOWS NOT SUPPORTED lol
     local dir = vim.fn.fnamemodify(old_buf_path, ":h")
     local cmake_path = nil
     while old_buf_path ~= client.root_dir do
-        local test_path = vim.fn.simplify(dir .. dir_sep .. "CMakeLists.txt")
+        local test_path = vim.fn.simplify(dir .. "/CMakeLists.txt")
         local exists = vim.uv.fs_stat(test_path, nil) ~= nil
         if exists then
             cmake_path = test_path
@@ -161,7 +160,7 @@ local function setup_gopls()
     -- for golang development (this makes Go source files always
     -- comply with the gofmt style)
     vim.api.nvim_create_autocmd("BufWritePre", {
-        group = vim.api.nvim_create_augroup("lsp.golang.formatting", { clear = true }),
+        group = vim.api.nvim_create_augroup("lsp.golang.formatting", {}),
         desc = 'Automatic Golang formatting',
         pattern = "*.go",
         callback = function()
@@ -267,6 +266,42 @@ function SetupLsps()
 
     lsp_enable("eslint")
 
+    local jdtls_config = {
+        cmd = {
+            'jdtls',
+            '-data',
+            vim.env.HOME .. "/.cache/jdtls-workspace/" .. vim.fn.fnamemodify(vim.fn.getcwd(), ':p:h:t')
+        },
+        settings = {
+            java = {
+                configuration = {
+                    runtimes = {
+                        {
+                            name = "JavaSE-21",
+                            path = "/usr/lib/jvm/java-21-openjdk",
+                            default = true,
+                        },
+                        {
+                            name = "JavaSE-25",
+                            path = "/usr/lib/jvm/java-25-openjdk",
+                        },
+                    },
+                },
+            },
+        },
+        -- Uncomment to use jdtls plugins
+        -- init_options = {
+        -- bundles = {},
+        -- },
+    }
+    vim.api.nvim_create_autocmd('FileType', {
+        pattern = 'java',
+        group = vim.api.nvim_create_augroup('lsp.java', {}),
+        callback = function()
+            require('jdtls').start_or_attach(jdtls_config)
+        end
+    })
+
     local old_on_attach_clangd = vim.lsp.config.clangd.on_attach
     lsp_enable("clangd", {
         ---@param client vim.lsp.Client
@@ -286,11 +321,10 @@ end
 return {
     {
         "neovim/nvim-lspconfig",
+        dependencies = {
+            { url = "https://codeberg.org/mfussenegger/nvim-jdtls" },
+        },
         config = SetupLsps,
-    },
-    {
-        "seblyng/roslyn.nvim",
-        ft = 'cs'
     },
     {
         "williamboman/mason.nvim",
@@ -301,18 +335,15 @@ return {
             },
         },
     },
+    -- LSP specific plugins go below --
     {
-        "ray-x/go.nvim",
-        dependencies = { -- optional packages
-            "ray-x/guihua.lua",
-            "neovim/nvim-lspconfig",
-            "nvim-treesitter/nvim-treesitter",
-        },
+        "seblyng/roslyn.nvim",
+        ft = {"cs"},
+    },
+    {
+        url = "https://codeberg.org/mfussenegger/nvim-jdtls",
         config = function()
-            require("go").setup()
-        end,
-        -- event = {"CmdlineEnter"},
-        ft = { "go", 'gomod' },
-        build = ':lua require("go.install").update_all()' -- if you need to install/update all binaries
-    }
+            require('jdtls')
+        end
+    },
 }
